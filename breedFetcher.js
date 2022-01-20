@@ -1,15 +1,13 @@
 const request = require('request');
-const args = process.argv.slice(2);
+const catAPI = "https://api.thecatapi.com/v1/breeds/search?q=";
 
-const breedName = args[0];
-const url = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
-request(url, (error, response, body) => {
-  if (error) {
-    console.log('Cannot get response from server. Error:', error);
-    return;
-  }
+const fetchBreedDescription = function(breedName, callback) {
+  const url = catAPI + breedName;
+  request(url, (error, response, body) => {
+    const data = JSON.parse(body);
+    const description = data[0] === undefined ? undefined : data[0].description;
+    callback(error, description);
+  });
+};
 
-  const data = JSON.parse(body);
-  console.log(data[0].description);
-});
-
+module.exports = {fetchBreedDescription};
